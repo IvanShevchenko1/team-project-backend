@@ -1,0 +1,103 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users-table
+      author: Ivanov
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_user
+                    nullable: false
+
+              - column:
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: user_city
+                  type: VARCHAR(100)
+
+              - column:
+                  name: created_at
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: last_active_at
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: last_meaningful_action_at
+                  type: DATETIME
+
+              - column:
+                  name: total_products_given
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: total_products_received
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: account_status
+                  type: VARCHAR(20)
+                  defaultValue: active
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: previous_visit_at
+                  type: DATETIME
+
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: username
+            constraintName: uk_user_username
+
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: email
+            constraintName: uk_user_email
+
+        - createIndex:
+            tableName: users
+            indexName: idx_user_last_meaningful_action_at
+            columns:
+              - column:
+                  name: last_meaningful_action_at
+
+        - createIndex:
+            tableName: users
+            indexName: idx_user_city
+            columns:
+              - column:
+                  name: user_city

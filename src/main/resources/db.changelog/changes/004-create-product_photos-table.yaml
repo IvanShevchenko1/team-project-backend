@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-product-photos
+      author: Ivanov
+      changes:
+        - createTable:
+            tableName: product_photos
+            columns:
+              - column:
+                  name: photo_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_product_photos
+                    nullable: false
+
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: photo_url
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: uploaded_at
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: is_primary
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: display_order
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: fk_photos_product
+            baseTableName: product_photos
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: product_id
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - createIndex:
+            tableName: product_photos
+            indexName: idx_photos_product_id
+            columns:
+              - column:
+                  name: product_id
+
+        - createIndex:
+            tableName: product_photos
+            indexName: idx_photos_product_primary
+            columns:
+              - column:
+                  name: product_id
+              - column:
+                  name: is_primary
