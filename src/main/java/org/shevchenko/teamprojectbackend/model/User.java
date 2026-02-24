@@ -16,6 +16,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false)
@@ -29,9 +30,10 @@ public class User {
 
     private String userCity;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime lastActiveAt;
 
     private LocalDateTime lastMeaningfulActionAt;
 
@@ -39,6 +41,8 @@ public class User {
 
     private int totalProductsReceived;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserStatus accountStatus;
 
     private LocalDateTime previousVisitAt;
@@ -56,12 +60,12 @@ public class User {
     void onCreate() {
         LocalDateTime now = LocalDateTime.now();
         if (createdAt == null) createdAt = now;
-        if (updatedAt == null) updatedAt = now;
+        if (lastActiveAt == null) lastActiveAt = now;
     }
 
     @PreUpdate
     void onUpdate() {
-        if (updatedAt == null) updatedAt = LocalDateTime.now();
+        if (lastActiveAt == null) lastActiveAt = LocalDateTime.now();
     }
 
 }

@@ -46,8 +46,6 @@ databaseChangeLog:
               - column:
                   name: last_active_at
                   type: DATETIME
-                  constraints:
-                    nullable: false
 
               - column:
                   name: last_meaningful_action_at
@@ -69,8 +67,7 @@ databaseChangeLog:
 
               - column:
                   name: account_status
-                  type: VARCHAR(20)
-                  defaultValue: active
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
 

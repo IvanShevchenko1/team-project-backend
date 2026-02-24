@@ -14,6 +14,7 @@ public class ProductPhoto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "photo_id")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -23,11 +24,11 @@ public class ProductPhoto {
     @Column(nullable = false)
     private String photoUrl;
 
-    @Column(updatable = false)
+    @Column(nullable = false)
     private LocalDateTime uploadedAt;
 
-    @Column(nullable = false)
-    private boolean primaryPhoto = false;
+    @Column(name = "is_primary", nullable = false)
+    private boolean isPrimary = false;
 
     @Column(nullable = false)
     private int displayOrder = 0;

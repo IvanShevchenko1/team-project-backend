@@ -13,6 +13,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
     private Long id;
 
     @Column(nullable = false)
@@ -22,9 +23,11 @@ public class Product {
 
     private String city;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductStatus status;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
