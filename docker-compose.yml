@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mysql
+    container_name: backend_db
+    env_file: ./.env
+    ports:
+      - "${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}"
+    environment:
+      MYSQL_DATABASE: "${MYSQLDB_DATABASE}"
+      MYSQL_USER: "${MYSQLDB_USER}"
+      MYSQL_PASSWORD: "${MYSQLDB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -p${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: spring_app_backend
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}"
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
+    env_file: ./.env
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/${MYSQLDB_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8"
+      SPRING_DATASOURCE_USERNAME: "${MYSQLDB_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${MYSQLDB_PASSWORD}"
