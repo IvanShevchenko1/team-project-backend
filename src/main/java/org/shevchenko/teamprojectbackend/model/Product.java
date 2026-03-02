@@ -69,8 +69,9 @@ public class Product {
     @PrePersist
     void onCreate() {
         LocalDateTime now = LocalDateTime.now();
+        if (status == null) status = ProductStatus.active;
         if (createdAt == null) createdAt = now;
-        updatedAt = now;
+        if (updatedAt == null) updatedAt = now;
     }
 
     @PreUpdate

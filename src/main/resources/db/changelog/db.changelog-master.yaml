@@ -7,3 +7,11 @@ databaseChangeLog:
       file: db/changelog/changes/003-create-products-table.yaml
   - include:
       file: db/changelog/changes/004-create-product_photos-table.yaml
+  - include:
+      file: db/changelog/changes/005-create-roles-table.yaml
+  - include:
+      file: db/changelog/changes/006-create-users_roles_table.yaml
+  - include:
+      file: db/changelog/changes/007-seed-a-default-role.yaml
+  - include:
+      file: db/changelog/changes/008-seed-a-default-category.yaml

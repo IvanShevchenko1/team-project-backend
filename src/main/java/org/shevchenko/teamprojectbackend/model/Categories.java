@@ -32,4 +32,11 @@ public class Categories {
         if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
+    public Categories() {
+    }
+
+    public Categories(Long id) {
+        this.id = id;
+    }
+
 }
