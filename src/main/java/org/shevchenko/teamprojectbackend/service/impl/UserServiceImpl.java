@@ -3,6 +3,7 @@ package org.shevchenko.teamprojectbackend.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.shevchenko.teamprojectbackend.dto.user.UserRegistrationRequestDto;
 import org.shevchenko.teamprojectbackend.dto.user.UserResponseDto;
+import org.shevchenko.teamprojectbackend.exception.EntityNotFoundException;
 import org.shevchenko.teamprojectbackend.exception.RegistrationException;
 import org.shevchenko.teamprojectbackend.mapper.UserMapper;
 import org.shevchenko.teamprojectbackend.model.Role;
@@ -43,6 +44,14 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(userRole);
         user.setAccountStatus(User.UserStatus.active);
         userRepository.save(user);
+        return userMapper.toDto(user);
+    }
+
+    @Override
+    public UserResponseDto getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can't find user with id: " + id)
+        );
         return userMapper.toDto(user);
     }
 }

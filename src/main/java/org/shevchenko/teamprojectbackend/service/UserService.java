@@ -7,4 +7,6 @@ import org.shevchenko.teamprojectbackend.exception.RegistrationException;
 public interface UserService {
     UserResponseDto register(UserRegistrationRequestDto request)
             throws RegistrationException;
+
+    UserResponseDto getUserById(Long id);
 }
