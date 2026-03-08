@@ -42,9 +42,8 @@ public class Product {
     @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Categories category;
+    @Column(nullable = false)
+    private String category;
 
     public enum ProductStatus {
         active,

@@ -9,6 +9,6 @@ public record ProductResponseDto(
         String city,
         Product.ProductStatus status,
         Long ownerId,
-        Long categoryId
+        String category
 ) {
 }
