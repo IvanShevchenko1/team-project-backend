@@ -8,7 +8,7 @@ public record ProductResponseDto(
         String description,
         String city,
         Product.ProductStatus status,
-        Long ownerId,
+        Long author,
         String category
 ) {
 }

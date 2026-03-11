@@ -12,7 +12,7 @@ import org.shevchenko.teamprojectbackend.model.Product;
 public interface ProductMapper {
 
     @Mappings({
-            @Mapping(target = "ownerId",
+            @Mapping(target = "author",
             source = "owner",
             qualifiedByName = "userToId"),
     })
