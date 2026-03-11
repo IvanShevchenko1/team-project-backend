@@ -25,7 +25,6 @@ public class ProductController {
         return productService.create(request);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<ProductResponseDto> getAll(Pageable pageable) {
