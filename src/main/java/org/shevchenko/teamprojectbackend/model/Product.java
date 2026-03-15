@@ -35,6 +35,9 @@ public class Product {
 
     private String city;
 
+    @Column(name = "contact_phone", nullable = false, length = 20)
+    private String contactPhone;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductStatus status;

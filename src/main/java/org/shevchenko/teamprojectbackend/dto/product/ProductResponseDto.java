@@ -9,6 +9,7 @@ public record ProductResponseDto(
         String city,
         Product.ProductStatus status,
         Long author,
-        String category
+        String category,
+        String contactPhone
 ) {
 }
