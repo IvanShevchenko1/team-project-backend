@@ -48,6 +48,13 @@ databaseChangeLog:
                     nullable: false
 
               - column:
+                  name: is_deleted
+                  type: BIT(1)
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+              - column:
                   name: status
                   type: VARCHAR(50)
                   constraints:

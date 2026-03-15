@@ -1,8 +1,6 @@
 package org.shevchenko.teamprojectbackend.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 import org.shevchenko.teamprojectbackend.config.MapperConfig;
 import org.shevchenko.teamprojectbackend.dto.product.ProductCreateRequestDto;
 import org.shevchenko.teamprojectbackend.dto.product.ProductResponseDto;
@@ -22,4 +20,7 @@ public interface ProductMapper {
             @Mapping(target = "owner", ignore = true)
     })
     Product toModel(ProductCreateRequestDto request);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(ProductCreateRequestDto request, @MappingTarget Product product);
 }

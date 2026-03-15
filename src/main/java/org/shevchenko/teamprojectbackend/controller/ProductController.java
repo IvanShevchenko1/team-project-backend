@@ -18,7 +18,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    @PostMapping
+    @PostMapping("/createProduct")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResponseDto create(
             @RequestBody @Valid ProductCreateRequestDto request) {
@@ -36,5 +36,20 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public Page<ProductResponseDto> getAllForCurrentUser(Pageable pageable) {
         return productService.getAllForCurrentUser(pageable);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
+        productService.deleteById(id);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResponseDto updateProduct(@PathVariable Long id,
+                                            @RequestBody @Valid ProductCreateRequestDto request) {
+        return productService.updateById(id, request);
     }
 }

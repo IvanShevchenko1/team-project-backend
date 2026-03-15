@@ -3,6 +3,7 @@ package org.shevchenko.teamprojectbackend.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.shevchenko.teamprojectbackend.dto.product.ProductCreateRequestDto;
 import org.shevchenko.teamprojectbackend.dto.product.ProductResponseDto;
+import org.shevchenko.teamprojectbackend.exception.EntityNotFoundException;
 import org.shevchenko.teamprojectbackend.mapper.ProductMapper;
 import org.shevchenko.teamprojectbackend.model.Product;
 import org.shevchenko.teamprojectbackend.model.User;
@@ -42,5 +43,18 @@ public class ProductServiceImpl implements ProductService {
         User user = (User) auth.getPrincipal();
         return productRepository.findAllByOwnerId(user.getId(), pageable)
                 .map(productMapper::toDto);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    @Override
+    public ProductResponseDto updateById(Long id, ProductCreateRequestDto request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Продукт за id " + id + " незнайдено."));
+        productMapper.updateEntity(request, product);
+        return productMapper.toDto(productRepository.save(product));
     }
 }

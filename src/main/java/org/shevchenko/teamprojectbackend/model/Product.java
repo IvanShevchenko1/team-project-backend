@@ -15,12 +15,17 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "products")
+@SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE product_id=?")
+@SQLRestriction("is_deleted = false")
 public class Product {
 
     @Id
@@ -37,6 +42,9 @@ public class Product {
 
     @Column(name = "contact_phone", nullable = false, length = 20)
     private String contactPhone;
+
+    @Column(name = "is_Deleted", nullable = false)
+    private boolean isDeleted = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
