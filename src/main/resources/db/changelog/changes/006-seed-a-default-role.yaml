@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 007-seed-a-default-role
+      id: 006-seed-a-default-role
       author: Ivanov
       changes:
         - insert:

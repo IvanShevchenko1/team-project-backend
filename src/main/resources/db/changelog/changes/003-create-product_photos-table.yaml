@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 004-create-product-photos
+      id: 003-create-product-photos
       author: Ivanov
       changes:
         - createTable:
