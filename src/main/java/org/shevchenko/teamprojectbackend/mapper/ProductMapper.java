@@ -13,11 +13,15 @@ public interface ProductMapper {
             @Mapping(target = "author",
             source = "owner",
             qualifiedByName = "userToId"),
+            @Mapping(target = "contact",
+            source = "contactPhone")
     })
     ProductResponseDto toDto(Product product);
 
     @Mappings({
-            @Mapping(target = "owner", ignore = true)
+            @Mapping(target = "owner", ignore = true),
+            @Mapping(target = "contactPhone",
+                    source = "contact")
     })
     Product toModel(ProductCreateRequestDto request);
 

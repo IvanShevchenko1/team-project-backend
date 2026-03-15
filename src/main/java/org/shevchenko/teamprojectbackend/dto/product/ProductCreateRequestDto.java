@@ -25,5 +25,5 @@ public class ProductCreateRequestDto {
             regexp = "^\\+?[0-9]{10,15}$",
             message = "Некоректний номер телефону (10–15 цифр, може починатися з +)"
     )
-    private String contactPhone;
+    private String contact;
 }

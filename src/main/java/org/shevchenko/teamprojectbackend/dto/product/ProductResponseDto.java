@@ -10,6 +10,6 @@ public record ProductResponseDto(
         Product.ProductStatus status,
         Long author,
         String category,
-        String contactPhone
+        String contact
 ) {
 }
