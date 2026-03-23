@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/changes/005-create-users_roles_table.yaml
   - include:
       file: db/changelog/changes/006-seed-a-default-role.yaml
+  - include:
+      file: db/changelog/changes/007-create-password_reset_tokens-table.yaml

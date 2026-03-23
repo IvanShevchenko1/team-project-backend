@@ -12,7 +12,7 @@ public record UserLoginRequestDto(
 
         @NotEmpty(message = "Вкажіть пароль")
         @Size(
-                min = 6,
+                min = 8,
                 max = 20,
                 message = "Пароль має містити від 6 до 20 символів"
         )

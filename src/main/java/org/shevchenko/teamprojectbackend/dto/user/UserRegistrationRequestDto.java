@@ -26,5 +26,10 @@ public class UserRegistrationRequestDto {
     private String password;
 
     @NotBlank(message = "Вкажіть ім'я")
+    @Size(min = 3, max = 12, message = "Ім'я має бути від 3 до 12 символів")
+    @Pattern(
+            regexp = "^[^\\s].*[^\\s]$",
+            message = "Ім'я не повинно починатися або закінчуватися пробілами"
+    )
     private String name;
 }
