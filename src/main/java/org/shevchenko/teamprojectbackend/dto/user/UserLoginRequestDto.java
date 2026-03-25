@@ -14,7 +14,7 @@ public record UserLoginRequestDto(
         @Size(
                 min = 8,
                 max = 20,
-                message = "Пароль має містити від 6 до 20 символів"
+                message = "Пароль має містити від 8 до 20 символів"
         )
         String password
 

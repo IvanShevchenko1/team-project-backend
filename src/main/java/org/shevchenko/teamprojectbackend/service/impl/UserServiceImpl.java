@@ -69,18 +69,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UpdateEmailResponseDto updateEmail(String authenticatedEmail, UpdateEmailRequestDto request) {
         User user = userRepository.findByEmail(authenticatedEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + authenticatedEmail));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Користувача з електронною поштою не знайдено: " + authenticatedEmail
+                ));
 
-        if (!user.getEmail().equals(request.currentEmail())) {
-            throw new IllegalArgumentException("Current email does not match authenticated user");
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new IllegalArgumentException("Невірний пароль");
         }
 
-        if (request.currentEmail().equals(request.newEmail())) {
-            throw new IllegalArgumentException("New email must be different from current email");
+        if (user.getEmail().equals(request.newEmail())) {
+            throw new IllegalArgumentException("Нова електронна пошта повинна відрізнятися від поточної");
         }
 
         if (userRepository.existsByEmail(request.newEmail())) {
-            throw new IllegalArgumentException("Email is already in use: " + request.newEmail());
+            throw new IllegalArgumentException("Ця електронна пошта вже використовується: " + request.newEmail());
         }
 
         user.setEmail(request.newEmail());
@@ -93,7 +95,7 @@ public class UserServiceImpl implements UserService {
                 user.getEmail(),
                 user.getName(),
                 newToken,
-                "Email updated successfully"
+                "Електронну пошту успішно оновлено"
         );
     }
 
