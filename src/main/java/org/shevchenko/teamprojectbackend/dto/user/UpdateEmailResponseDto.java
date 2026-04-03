@@ -4,7 +4,6 @@ public record UpdateEmailResponseDto(
         Long id,
         String email,
         String name,
-        String token,
         String message
 ) {
 }

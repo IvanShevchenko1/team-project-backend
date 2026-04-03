@@ -88,13 +88,11 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.newEmail());
         userRepository.save(user);
 
-        String newToken = jwtUtil.generateToken(user.getUsername());
 
         return new UpdateEmailResponseDto(
                 user.getId(),
                 user.getEmail(),
                 user.getName(),
-                newToken,
                 "Електронну пошту успішно оновлено"
         );
     }

@@ -18,4 +18,4 @@ public record UpdateEmailRequestDto(
         @Email(message = "Некоректний формат електронної пошти")
         String newEmail
 ) {
-}
+}       
