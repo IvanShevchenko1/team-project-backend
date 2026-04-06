@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDto register(UserRegistrationRequestDto requestDto)
+    public UserRegistrationResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
 
         if (userRepository.existsByEmail(requestDto.getEmail())) {
@@ -55,7 +55,17 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(userRole);
         user.setAccountStatus(User.UserStatus.active);
         userRepository.save(user);
-        return userMapper.toDto(user);
+
+        String token = jwtUtil.generateToken(user.getUsername());
+
+        return new UserRegistrationResponseDto(
+                user.getId(),
+                user.getEmail(),
+                user.getUsername(),
+                "Реєстрація успішна",
+                user.getUserCity(),
+                token
+        );
     }
 
     @Override
@@ -100,10 +110,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public MessageResponseDto updatePassword(String authenticatedEmail, UpdatePasswordRequestDto request) {
         User user = userRepository.findByEmail(authenticatedEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + authenticatedEmail));
+                .orElseThrow(() -> new EntityNotFoundException("Користувача не знайдено: " + authenticatedEmail));
 
         if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Current password is incorrect");
+            throw new IllegalArgumentException("Поточний пароль неправильний");
         }
 
         /*if (!request.newPassword().equals(request.confirmPassword())) {
@@ -117,7 +127,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.newPassword()));
         userRepository.save(user);
 
-        return new MessageResponseDto("Password updated successfully");
+        return new MessageResponseDto("Пароль успішно змінено");
     }
 
     @Override

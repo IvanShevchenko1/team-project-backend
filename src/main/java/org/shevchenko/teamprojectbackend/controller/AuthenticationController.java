@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.shevchenko.teamprojectbackend.dto.message.MessageResponseDto;
 import org.shevchenko.teamprojectbackend.dto.passwordResetToken.ForgotPasswordRequestDto;
 import org.shevchenko.teamprojectbackend.dto.passwordResetToken.ResetPasswordRequestDto;
-import org.shevchenko.teamprojectbackend.dto.user.UserLoginRequestDto;
-import org.shevchenko.teamprojectbackend.dto.user.UserLoginResponseDto;
-import org.shevchenko.teamprojectbackend.dto.user.UserRegistrationRequestDto;
-import org.shevchenko.teamprojectbackend.dto.user.UserResponseDto;
+import org.shevchenko.teamprojectbackend.dto.user.*;
 import org.shevchenko.teamprojectbackend.exception.RegistrationException;
 import org.shevchenko.teamprojectbackend.security.AuthenticationService;
 import org.shevchenko.teamprojectbackend.service.UserService;
@@ -24,7 +21,7 @@ public class AuthenticationController {
 
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDto register(
+    public UserRegistrationResponseDto register(
             @RequestBody @Valid UserRegistrationRequestDto request)
             throws RegistrationException {
         return userService.register(request);
