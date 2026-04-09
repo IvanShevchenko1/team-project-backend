@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         }*/
 
         if (passwordEncoder.matches(request.newPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("New password must be different from current password");
+            throw new IllegalArgumentException("Новий пароль має відрізнятися від поточного");
         }
 
         user.setPassword(passwordEncoder.encode(request.newPassword()));
