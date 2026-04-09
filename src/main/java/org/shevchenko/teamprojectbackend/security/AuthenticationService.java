@@ -43,7 +43,7 @@ public class AuthenticationService {
         );
 
         User user = (User) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getId());
 
         return new UserLoginResponseDto(
                 user.getId(),

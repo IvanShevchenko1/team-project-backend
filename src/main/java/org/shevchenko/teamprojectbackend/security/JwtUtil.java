@@ -1,7 +1,6 @@
 package org.shevchenko.teamprojectbackend.security;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -20,12 +19,12 @@ public class JwtUtil {
     private long expiration;
 
     public JwtUtil(@Value("${jwt.secret}") String secretString) {
-        secret = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
+        this.secret = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username) {
+    public String generateToken(Long userId) {
         return Jwts.builder()
-                .subject(username)
+                .subject(String.valueOf(userId))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(secret)
@@ -34,27 +33,36 @@ public class JwtUtil {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claimsJws = Jwts.parser()
+            Date expirationDate = Jwts.parser()
                     .verifyWith(secret)
                     .build()
-                    .parseSignedClaims(token);
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration();
 
-            return !claimsJws.getPayload().getExpiration().before(new Date());
+            return expirationDate != null && expirationDate.after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtException("Expired or invalid JWT token");
+            return false;
         }
     }
 
-    public String getUsername(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+    public Long getUserId(String token) {
+        String subject = getClaimFromToken(token, Claims::getSubject);
+
+        try {
+            return Long.parseLong(subject);
+        } catch (NumberFormatException e) {
+            throw new JwtException("JWT subject is not a valid user id", e);
+        }
     }
 
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = Jwts.parser()
+        Claims claims = Jwts.parser()
                 .verifyWith(secret)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+
         return claimsResolver.apply(claims);
     }
 }

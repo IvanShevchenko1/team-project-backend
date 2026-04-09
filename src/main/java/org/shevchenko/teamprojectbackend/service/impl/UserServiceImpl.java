@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
         user.setAccountStatus(User.UserStatus.active);
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getId());
 
         return new UserRegistrationResponseDto(
                 user.getId(),
