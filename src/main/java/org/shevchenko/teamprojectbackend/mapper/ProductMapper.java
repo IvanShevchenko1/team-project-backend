@@ -26,5 +26,7 @@ public interface ProductMapper {
     Product toModel(ProductCreateRequestDto request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "contactPhone",
+            source = "contact")
     void updateEntity(ProductCreateRequestDto request, @MappingTarget Product product);
 }
