@@ -1,12 +1,14 @@
 package org.shevchenko.teamprojectbackend.mapper;
 
+import java.time.Duration;
 import org.mapstruct.*;
 import org.shevchenko.teamprojectbackend.config.MapperConfig;
 import org.shevchenko.teamprojectbackend.dto.product.ProductCreateRequestDto;
 import org.shevchenko.teamprojectbackend.dto.product.ProductResponseDto;
 import org.shevchenko.teamprojectbackend.model.Product;
+import org.shevchenko.teamprojectbackend.service.ProductPhotoStorageService;
 
-@Mapper(config = MapperConfig.class, uses = {UserMapper.class})
+@Mapper(config = MapperConfig.class, uses = {UserMapper.class, ProductPhotoMapper.class})
 public interface ProductMapper {
 
     @Mappings({
@@ -16,7 +18,9 @@ public interface ProductMapper {
             @Mapping(target = "contact",
             source = "contactPhone")
     })
-    ProductResponseDto toDto(Product product);
+    ProductResponseDto toDto(Product product,
+                             @Context ProductPhotoStorageService productPhotoStorageService,
+                             @Context Duration presignDuration);
 
     @Mappings({
             @Mapping(target = "owner", ignore = true),

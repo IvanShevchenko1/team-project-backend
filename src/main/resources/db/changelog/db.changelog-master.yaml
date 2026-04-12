@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/changes/006-seed-a-default-role.yaml
   - include:
       file: db/changelog/changes/007-create-password_reset_tokens-table.yaml
+  - include:
+      file: db/changelog/changes/008-alter-product-photos-add-object-key.yaml

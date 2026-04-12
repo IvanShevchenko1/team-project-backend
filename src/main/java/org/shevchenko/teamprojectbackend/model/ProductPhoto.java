@@ -21,8 +21,8 @@ public class ProductPhoto {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false)
-    private String photoUrl;
+    @Column(name = "object_key", nullable = false, length = 512)
+    private String objectKey;
 
     @Column(nullable = false)
     private LocalDateTime uploadedAt;
