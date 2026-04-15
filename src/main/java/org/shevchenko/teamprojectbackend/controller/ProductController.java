@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,8 +28,9 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResponseDto create(
             @ModelAttribute @Valid ProductCreateRequestDto request,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        return productService.create(request, files);
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        return productService.create(request, mergeFiles(files, image));
     }
 
     @GetMapping
@@ -64,8 +66,9 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     public List<ProductPhotoResponseDto> uploadPhotos(
             @PathVariable Long id,
-            @RequestPart("files") List<MultipartFile> files) {
-        return productService.uploadPhotos(id, files);
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        return productService.uploadPhotos(id, mergeFiles(files, image));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
@@ -73,5 +76,17 @@ public class ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePhoto(@PathVariable Long productId, @PathVariable Long photoId) {
         productService.deletePhoto(productId, photoId);
+    }
+
+    private List<MultipartFile> mergeFiles(List<MultipartFile> files, MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            return files;
+        }
+        if (files == null || files.isEmpty()) {
+            return List.of(image);
+        }
+        List<MultipartFile> mergedFiles = new ArrayList<>(files);
+        mergedFiles.add(image);
+        return mergedFiles;
     }
 }
