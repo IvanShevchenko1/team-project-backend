@@ -13,6 +13,6 @@ public record ProductResponseDto(
         Long author,
         String category,
         String contact,
-        List<ProductPhotoResponseDto> photos
+        List<ProductPhotoResponseDto> image
 ) {
 }
