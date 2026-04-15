@@ -40,11 +40,20 @@ public class ProductServiceImpl implements ProductService {
     private long presignExpirationMinutes;
 
     @Override
-    public ProductResponseDto create(ProductCreateRequestDto request) {
+    @Transactional
+    public ProductResponseDto create(ProductCreateRequestDto request, List<MultipartFile> files) {
         Product product = productMapper.toModel(request);
         User currentUser = userService.getAuthenticatedUserOrThrow();
         product.setOwner(currentUser);
-        return productMapper.toDto(productRepository.save(product),
+        Product savedProduct = productRepository.save(product);
+
+        if (hasFiles(files)) {
+            validatePhotoUploadRequest(files);
+            List<ProductPhoto> savedPhotos = savePhotos(savedProduct, files, 0);
+            savedProduct.getPhotos().addAll(savedPhotos);
+        }
+
+        return productMapper.toDto(savedProduct,
                 productPhotoStorageService,
                 presignDuration());
     }
@@ -93,17 +102,7 @@ public class ProductServiceImpl implements ProductService {
         long existingCount = productPhotoRepository.countByProductId(productId);
         validatePhotoLimit(productId, files.size());
 
-        List<ProductPhoto> photos = new ArrayList<>();
-        for (int i = 0; i < files.size(); i++) {
-            ProductPhoto photo = new ProductPhoto();
-            photo.setProduct(product);
-            photo.setObjectKey(productPhotoStorageService.uploadProductPhoto(productId, files.get(i)));
-            photo.setPrimary(existingCount == 0 && i == 0);
-            photo.setDisplayOrder((int) existingCount + i);
-            photos.add(photo);
-        }
-
-        return productPhotoRepository.saveAll(photos).stream()
+        return savePhotos(product, files, existingCount).stream()
                 .map(photo -> productPhotoMapper.toDto(photo,
                         productPhotoStorageService,
                         presignDuration()))
@@ -129,6 +128,23 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(productId)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Продукт за id " + productId + " незнайдено."));
+    }
+
+    private List<ProductPhoto> savePhotos(Product product, List<MultipartFile> files, long existingCount) {
+        List<ProductPhoto> photos = new ArrayList<>();
+        for (int i = 0; i < files.size(); i++) {
+            ProductPhoto photo = new ProductPhoto();
+            photo.setProduct(product);
+            photo.setObjectKey(productPhotoStorageService.uploadProductPhoto(product.getId(), files.get(i)));
+            photo.setPrimary(existingCount == 0 && i == 0);
+            photo.setDisplayOrder((int) existingCount + i);
+            photos.add(photo);
+        }
+        return productPhotoRepository.saveAll(photos);
+    }
+
+    private boolean hasFiles(List<MultipartFile> files) {
+        return files != null && !files.isEmpty();
     }
 
     private Duration presignDuration() {

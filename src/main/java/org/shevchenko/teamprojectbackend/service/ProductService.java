@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ProductService {
-    ProductResponseDto create(ProductCreateRequestDto request);
+    ProductResponseDto create(ProductCreateRequestDto request, List<MultipartFile> files);
 
     Page<ProductResponseDto> getAll(Pageable pageable);
 

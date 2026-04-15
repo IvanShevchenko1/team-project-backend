@@ -23,11 +23,12 @@ public class ProductController {
     private final ProductService productService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    @PostMapping("/createProduct")
+    @PostMapping(value = "/createProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResponseDto create(
-            @RequestBody @Valid ProductCreateRequestDto request) {
-        return productService.create(request);
+            @ModelAttribute @Valid ProductCreateRequestDto request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        return productService.create(request, files);
     }
 
     @GetMapping
