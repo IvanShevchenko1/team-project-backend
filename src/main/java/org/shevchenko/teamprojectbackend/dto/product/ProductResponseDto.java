@@ -1,8 +1,8 @@
 package org.shevchenko.teamprojectbackend.dto.product;
 
+import java.time.LocalDateTime;
 import org.shevchenko.teamprojectbackend.dto.productPhoto.ProductPhotoResponseDto;
 import org.shevchenko.teamprojectbackend.model.Product;
-import java.util.List;
 
 public record ProductResponseDto(
         Long id,
@@ -13,6 +13,7 @@ public record ProductResponseDto(
         Long author,
         String category,
         String contact,
-        List<ProductPhotoResponseDto> image
+        ProductPhotoResponseDto image,
+        LocalDateTime createdAt
 ) {
 }

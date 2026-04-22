@@ -18,7 +18,8 @@ public interface ProductMapper {
             @Mapping(target = "contact",
             source = "contactPhone"),
             @Mapping(target = "image",
-            source = "photos")
+            source = "photos",
+            qualifiedByName = "firstPhotoToDto")
     })
     ProductResponseDto toDto(Product product,
                              @Context ProductPhotoStorageService productPhotoStorageService,
