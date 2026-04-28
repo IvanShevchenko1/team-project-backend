@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-alter-product-photos-replace-url-with-object-key
+      author: Ivanov
+      changes:
+        - addColumn:
+            tableName: product_photos
+            columns:
+              - column:
+                  name: object_key
+                  type: varchar(512)
+        - sql:
+            sql: UPDATE product_photos SET object_key = photo_url
+        - addNotNullConstraint:
+            tableName: product_photos
+            columnName: object_key
+            columnDataType: varchar(512)
+        - dropColumn:
+            tableName: product_photos
+            columnName: photo_url

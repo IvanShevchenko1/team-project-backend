@@ -4,12 +4,17 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.shevchenko.teamprojectbackend.dto.product.ProductCreateRequestDto;
 import org.shevchenko.teamprojectbackend.dto.product.ProductResponseDto;
+import org.shevchenko.teamprojectbackend.dto.productPhoto.ProductPhotoResponseDto;
 import org.shevchenko.teamprojectbackend.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,11 +23,13 @@ public class ProductController {
     private final ProductService productService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    @PostMapping("/createProduct")
+    @PostMapping(value = "/createProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResponseDto create(
-            @RequestBody @Valid ProductCreateRequestDto request) {
-        return productService.create(request);
+            @ModelAttribute @Valid ProductCreateRequestDto request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        return productService.create(request, resolveSingleImage(files, image));
     }
 
     @GetMapping
@@ -51,5 +58,45 @@ public class ProductController {
     public ProductResponseDto updateProduct(@PathVariable Long id,
                                             @RequestBody @Valid ProductCreateRequestDto request) {
         return productService.updateById(id, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @PostMapping(value = "/{id}/photos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductPhotoResponseDto uploadPhotos(
+            @PathVariable Long id,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        return productService.uploadPhotos(id, resolveSingleImage(files, image));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @DeleteMapping("/{productId}/photos/{photoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePhoto(@PathVariable Long productId, @PathVariable Long photoId) {
+        productService.deletePhoto(productId, photoId);
+    }
+
+    private MultipartFile resolveSingleImage(List<MultipartFile> files, MultipartFile image) {
+        MultipartFile fileFromList = null;
+        if (files != null) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    if (fileFromList != null) {
+                        throw new IllegalArgumentException("Only one image is allowed");
+                    }
+                    fileFromList = file;
+                }
+            }
+        }
+
+        if (fileFromList != null && image != null && !image.isEmpty()) {
+            throw new IllegalArgumentException("Only one image is allowed");
+        }
+
+        if (image != null && !image.isEmpty()) {
+            return image;
+        }
+        return fileFromList;
     }
 }

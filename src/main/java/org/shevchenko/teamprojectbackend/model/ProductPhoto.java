@@ -17,21 +17,15 @@ public class ProductPhoto {
     @Column(name = "photo_id")
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false, unique = true)
     private Product product;
 
-    @Column(nullable = false)
-    private String photoUrl;
+    @Column(name = "object_key", nullable = false, length = 512)
+    private String objectKey;
 
     @Column(nullable = false)
     private LocalDateTime uploadedAt;
-
-    @Column(name = "is_primary", nullable = false)
-    private boolean isPrimary = false;
-
-    @Column(nullable = false)
-    private int displayOrder = 0;
 
     @PrePersist
     void onCreate() {

@@ -33,20 +33,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
-              - column:
-                  name: is_primary
-                  type: TINYINT(1)
-                  defaultValueNumeric: 0
-                  constraints:
-                    nullable: false
-
-              - column:
-                  name: display_order
-                  type: INT
-                  defaultValueNumeric: 0
-                  constraints:
-                    nullable: false
-
         - addForeignKeyConstraint:
             constraintName: fk_photos_product
             baseTableName: product_photos
@@ -62,12 +48,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: product_id
-
-        - createIndex:
+        - addUniqueConstraint:
             tableName: product_photos
-            indexName: idx_photos_product_primary
-            columns:
-              - column:
-                  name: product_id
-              - column:
-                  name: is_primary
+            columnNames: product_id
+            constraintName: uk_product_photos_product_id
