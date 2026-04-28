@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class ProductController {
             @ModelAttribute @Valid ProductCreateRequestDto request,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @RequestPart(value = "image", required = false) MultipartFile image) {
-        return productService.create(request, mergeFiles(files, image));
+        return productService.create(request, resolveSingleImage(files, image));
     }
 
     @GetMapping
@@ -64,11 +63,11 @@ public class ProductController {
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @PostMapping(value = "/{id}/photos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public List<ProductPhotoResponseDto> uploadPhotos(
+    public ProductPhotoResponseDto uploadPhotos(
             @PathVariable Long id,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @RequestPart(value = "image", required = false) MultipartFile image) {
-        return productService.uploadPhotos(id, mergeFiles(files, image));
+        return productService.uploadPhotos(id, resolveSingleImage(files, image));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
@@ -78,15 +77,26 @@ public class ProductController {
         productService.deletePhoto(productId, photoId);
     }
 
-    private List<MultipartFile> mergeFiles(List<MultipartFile> files, MultipartFile image) {
-        if (image == null || image.isEmpty()) {
-            return files;
+    private MultipartFile resolveSingleImage(List<MultipartFile> files, MultipartFile image) {
+        MultipartFile fileFromList = null;
+        if (files != null) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    if (fileFromList != null) {
+                        throw new IllegalArgumentException("Only one image is allowed");
+                    }
+                    fileFromList = file;
+                }
+            }
         }
-        if (files == null || files.isEmpty()) {
-            return List.of(image);
+
+        if (fileFromList != null && image != null && !image.isEmpty()) {
+            throw new IllegalArgumentException("Only one image is allowed");
         }
-        List<MultipartFile> mergedFiles = new ArrayList<>(files);
-        mergedFiles.add(image);
-        return mergedFiles;
+
+        if (image != null && !image.isEmpty()) {
+            return image;
+        }
+        return fileFromList;
     }
 }

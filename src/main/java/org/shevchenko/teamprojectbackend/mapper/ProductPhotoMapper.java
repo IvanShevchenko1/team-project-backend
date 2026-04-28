@@ -1,7 +1,6 @@
 package org.shevchenko.teamprojectbackend.mapper;
 
 import java.time.Duration;
-import java.util.List;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,21 +15,9 @@ public interface ProductPhotoMapper {
     @Mapping(target = "url",
             source = "objectKey",
             qualifiedByName = "objectKeyToUrl")
-    @Mapping(target = "isPrimary",
-            source = "primary")
     ProductPhotoResponseDto toDto(ProductPhoto photo,
                                   @Context ProductPhotoStorageService productPhotoStorageService,
                                   @Context Duration presignDuration);
-
-    @Named("firstPhotoToDto")
-    default ProductPhotoResponseDto firstPhotoToDto(List<ProductPhoto> photos,
-                                                   @Context ProductPhotoStorageService productPhotoStorageService,
-                                                   @Context Duration presignDuration) {
-        if (photos == null || photos.isEmpty()) {
-            return null;
-        }
-        return toDto(photos.get(0), productPhotoStorageService, presignDuration);
-    }
 
     @Named("objectKeyToUrl")
     default String objectKeyToUrl(String objectKey,

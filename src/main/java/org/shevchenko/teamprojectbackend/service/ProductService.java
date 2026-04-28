@@ -6,10 +6,9 @@ import org.shevchenko.teamprojectbackend.dto.productPhoto.ProductPhotoResponseDt
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.List;
 
 public interface ProductService {
-    ProductResponseDto create(ProductCreateRequestDto request, List<MultipartFile> files);
+    ProductResponseDto create(ProductCreateRequestDto request, MultipartFile image);
 
     Page<ProductResponseDto> getAll(Pageable pageable);
 
@@ -19,7 +18,7 @@ public interface ProductService {
 
     ProductResponseDto updateById(Long id, ProductCreateRequestDto request);
 
-    List<ProductPhotoResponseDto> uploadPhotos(Long productId, List<MultipartFile> files);
+    ProductPhotoResponseDto uploadPhotos(Long productId, MultipartFile image);
 
     void deletePhoto(Long productId, Long photoId);
 

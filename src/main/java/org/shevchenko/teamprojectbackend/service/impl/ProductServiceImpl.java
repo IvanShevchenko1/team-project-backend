@@ -1,8 +1,6 @@
 package org.shevchenko.teamprojectbackend.service.impl;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.shevchenko.teamprojectbackend.dto.product.ProductCreateRequestDto;
 import org.shevchenko.teamprojectbackend.dto.product.ProductResponseDto;
@@ -41,16 +39,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponseDto create(ProductCreateRequestDto request, List<MultipartFile> files) {
+    public ProductResponseDto create(ProductCreateRequestDto request, MultipartFile image) {
         Product product = productMapper.toModel(request);
         User currentUser = userService.getAuthenticatedUserOrThrow();
         product.setOwner(currentUser);
         Product savedProduct = productRepository.save(product);
 
-        if (hasFiles(files)) {
-            validatePhotoUploadRequest(files);
-            List<ProductPhoto> savedPhotos = savePhotos(savedProduct, files, 0);
-            savedProduct.getPhotos().addAll(savedPhotos);
+        if (hasImage(image)) {
+            ProductPhoto savedPhoto = savePhoto(savedProduct, image);
+            savedProduct.setPhoto(savedPhoto);
         }
 
         return productMapper.toDto(savedProduct,
@@ -92,21 +89,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public List<ProductPhotoResponseDto> uploadPhotos(Long productId, List<MultipartFile> files) {
-        validatePhotoUploadRequest(files);
+    public ProductPhotoResponseDto uploadPhotos(Long productId, MultipartFile image) {
+        validateSingleImageUploadRequest(image);
 
         Product product = getProductOrThrow(productId);
         User currentUser = userService.getAuthenticatedUserOrThrow();
         validateOwnership(product, currentUser);
 
-        long existingCount = productPhotoRepository.countByProductId(productId);
-        validatePhotoLimit(productId, files.size());
+        replaceExistingPhoto(productId);
+        ProductPhoto savedPhoto = savePhoto(product, image);
+        product.setPhoto(savedPhoto);
 
-        return savePhotos(product, files, existingCount).stream()
-                .map(photo -> productPhotoMapper.toDto(photo,
-                        productPhotoStorageService,
-                        presignDuration()))
-                .toList();
+        return productPhotoMapper.toDto(savedPhoto,
+                productPhotoStorageService,
+                presignDuration());
     }
 
     @Override
@@ -130,21 +126,22 @@ public class ProductServiceImpl implements ProductService {
                         new EntityNotFoundException("Продукт за id " + productId + " незнайдено."));
     }
 
-    private List<ProductPhoto> savePhotos(Product product, List<MultipartFile> files, long existingCount) {
-        List<ProductPhoto> photos = new ArrayList<>();
-        for (int i = 0; i < files.size(); i++) {
-            ProductPhoto photo = new ProductPhoto();
-            photo.setProduct(product);
-            photo.setObjectKey(productPhotoStorageService.uploadProductPhoto(product.getId(), files.get(i)));
-            photo.setPrimary(existingCount == 0 && i == 0);
-            photo.setDisplayOrder((int) existingCount + i);
-            photos.add(photo);
-        }
-        return productPhotoRepository.saveAll(photos);
+    private ProductPhoto savePhoto(Product product, MultipartFile image) {
+        ProductPhoto photo = new ProductPhoto();
+        photo.setProduct(product);
+        photo.setObjectKey(productPhotoStorageService.uploadProductPhoto(product.getId(), image));
+        return productPhotoRepository.save(photo);
     }
 
-    private boolean hasFiles(List<MultipartFile> files) {
-        return files != null && !files.isEmpty();
+    private void replaceExistingPhoto(Long productId) {
+        productPhotoRepository.findByProductId(productId).ifPresent(existingPhoto -> {
+            productPhotoStorageService.deleteObject(existingPhoto.getObjectKey());
+            productPhotoRepository.delete(existingPhoto);
+        });
+    }
+
+    private boolean hasImage(MultipartFile image) {
+        return image != null && !image.isEmpty();
     }
 
     private Duration presignDuration() {
@@ -157,20 +154,9 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private void validatePhotoUploadRequest(List<MultipartFile> files) {
-        if (files == null || files.isEmpty()) {
-            throw new IllegalArgumentException("No files provided");
-        }
-
-        if (files.size() > 10) {
-            throw new IllegalArgumentException("You can upload at most 10 photos at once");
-        }
-    }
-
-    private void validatePhotoLimit(Long productId, int incomingCount) {
-        long existingCount = productPhotoRepository.countByProductId(productId);
-        if (existingCount + incomingCount > 10) {
-            throw new IllegalArgumentException("A product can have at most 10 photos");
+    private void validateSingleImageUploadRequest(MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("No image provided");
         }
     }
 }
