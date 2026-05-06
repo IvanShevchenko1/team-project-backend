@@ -23,7 +23,7 @@ public class ProductCreateRequestDto {
     @NotBlank(message = "Вкажіть контактний номер телефону")
     @Pattern(
             regexp = "^\\+?[0-9]{10,15}$",
-            message = "Некоректний номер телефону (10–15 цифр, може починатися з +)"
+            message = "Некоректний номер телефону"
     )
     private String contact;
 }
