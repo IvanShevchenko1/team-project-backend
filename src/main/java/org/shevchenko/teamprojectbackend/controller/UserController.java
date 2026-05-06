@@ -40,6 +40,7 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User retrieved successfully"),
             @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "User was not found")
     })
     public UserResponseDto getUserById(@Parameter(description = "User id") @PathVariable Long id) {
@@ -52,7 +53,8 @@ public class UserController {
     @Operation(summary = "Get authenticated user profile")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Profile retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Authentication required")
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public UserResponseDto getAuthenticatedUser() {
         return userService.getAuthenticatedUser();
@@ -65,7 +67,8 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Email updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid password or email"),
-            @ApiResponse(responseCode = "401", description = "Authentication required")
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public UpdateEmailResponseDto updateEmail(
             Authentication authentication,
@@ -81,7 +84,8 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Password updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid current or new password"),
-            @ApiResponse(responseCode = "401", description = "Authentication required")
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public MessageResponseDto updatePassword(
             Authentication authentication,

@@ -42,7 +42,8 @@ public class ProductController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Product created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid product data or image request"),
-            @ApiResponse(responseCode = "401", description = "Authentication required")
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public ProductResponseDto create(
             @ModelAttribute @Valid ProductCreateRequestDto request,
@@ -74,7 +75,8 @@ public class ProductController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User products retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Authentication required")
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public Page<ProductResponseDto> getAllForCurrentUser(Pageable pageable) {
         return productService.getAllForCurrentUser(pageable);
@@ -91,6 +93,7 @@ public class ProductController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Product deleted successfully"),
             @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Product was not found")
     })
     public void deleteById(@Parameter(description = "Product id") @PathVariable Long id) {
@@ -108,6 +111,7 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Product updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid product data"),
             @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Product was not found")
     })
     public ProductResponseDto updateProduct(@Parameter(description = "Product id") @PathVariable Long id,
