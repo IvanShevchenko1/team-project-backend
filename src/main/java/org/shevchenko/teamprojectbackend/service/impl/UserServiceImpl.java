@@ -40,11 +40,6 @@ public class UserServiceImpl implements UserService {
                     "Email вже зареєстровано: " + requestDto.getEmail());
         }
 
-        if (userRepository.existsByName(requestDto.getName())) {
-            throw new RegistrationException(
-                    "Username вже зареєстровано: " + requestDto.getName());
-        }
-
         User user = userMapper.toModel(requestDto);
 
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));

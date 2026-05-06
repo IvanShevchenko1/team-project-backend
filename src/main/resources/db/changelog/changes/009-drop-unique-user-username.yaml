@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-drop-unique-user-username
+      author: Ivanov
+      changes:
+        - dropUniqueConstraint:
+            tableName: users
+            constraintName: uk_user_username
