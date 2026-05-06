@@ -8,6 +8,8 @@ import org.shevchenko.teamprojectbackend.dto.productPhoto.ProductPhotoResponseDt
 import org.shevchenko.teamprojectbackend.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +36,9 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<ProductResponseDto> getAll(Pageable pageable) {
+    public Page<ProductResponseDto> getAll(
+            @PageableDefault(size = 100, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
         return productService.getAll(pageable);
     }
 
