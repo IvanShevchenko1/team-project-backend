@@ -1,5 +1,11 @@
 package org.shevchenko.teamprojectbackend.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.shevchenko.teamprojectbackend.dto.message.MessageResponseDto;
@@ -22,19 +28,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
+@Tag(name = "Users", description = "User profile and account settings")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto getUserById(@PathVariable Long id) {
+    @Operation(summary = "Get user by id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "User was not found")
+    })
+    public UserResponseDto getUserById(@Parameter(description = "User id") @PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get authenticated user profile")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Profile retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
+    })
     public UserResponseDto getAuthenticatedUser() {
         return userService.getAuthenticatedUser();
     }
@@ -42,6 +63,13 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @PatchMapping("/me/email")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update authenticated user's email")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Email updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid password or email"),
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
+    })
     public UpdateEmailResponseDto updateEmail(
             Authentication authentication,
             @RequestBody @Valid UpdateEmailRequestDto request
@@ -52,6 +80,13 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @PatchMapping("/me/password")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update authenticated user's password")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid current or new password"),
+            @ApiResponse(responseCode = "401", description = "Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
+    })
     public MessageResponseDto updatePassword(
             Authentication authentication,
             @RequestBody @Valid UpdatePasswordRequestDto request
