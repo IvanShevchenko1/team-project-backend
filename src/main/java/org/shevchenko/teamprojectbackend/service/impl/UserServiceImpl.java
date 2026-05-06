@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         return new UserRegistrationResponseDto(
                 user.getId(),
                 user.getEmail(),
-                user.getUsername(),
+                user.getName(),
                 "Реєстрація успішна",
                 user.getUserCity(),
                 token
