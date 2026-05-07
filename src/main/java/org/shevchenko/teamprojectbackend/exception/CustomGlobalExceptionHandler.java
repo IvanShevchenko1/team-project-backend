@@ -78,7 +78,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("Timestamp", LocalDateTime.now());
-        body.put("Error", "Invalid credentials");
+        body.put("Error", "Невірна електронна пошта або пароль");
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 

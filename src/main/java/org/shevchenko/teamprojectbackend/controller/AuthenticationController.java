@@ -44,7 +44,7 @@ public class AuthenticationController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Login successful"),
             @ApiResponse(responseCode = "400", description = "Invalid login data"),
-            @ApiResponse(responseCode = "401", description = "Invalid credentials")
+            @ApiResponse(responseCode = "401", description = "Невірна електронна пошта або пароль")
     })
     public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto request) {
         return authenticationService.authenticate(request);
